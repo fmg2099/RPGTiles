@@ -11,11 +11,22 @@ by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit h
 
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
 #include <cstdio>
+#include <fstream>
+
 #include "maptinytown.h"
 #include "Funny.h"
 #include "LinkedList.h"
 #include "Inventory.h"
 #include "PlayerCharacter.h"
+#include "Stack.h"
+#include "Queue.h"
+#include "PanelMensaje.h"
+
+extern "C"
+{
+	#include "md5.h"
+}
+
 
 // #include "Functions.h"
 int main ()
@@ -36,8 +47,34 @@ int main ()
 	lista->AddNode(new int(42));
 	lista->RemoveLastNode();
 
+	//PRUEBA DE stack o pila
+	Stack<float> pila(10);
+	std::cout << "Pila vacia: " <<std::boolalpha  << pila.isEmpty() << std::endl;
+	pila.push(1.0f);
+	pila.push(3.1416);
+	pila.push(2.71828);
+	std::cout << "num de elementos de la pila: " << pila.size() << std::endl;
+	float temp = pila.pop();
+	std::cout << "num de elementos de la pila: " << pila.size() << std::endl;
 
-
+	//prueba de Queue
+	Queue<int> q = Queue<int>(3);
+	std::cout << "Cola vacia: " << std::boolalpha << q.isEmpty() << std::endl;
+	q.enqueue(10);
+	q.enqueue(24);
+	q.enqueue(42);
+	q.enqueue(99);
+	q.debugPrintContents();
+	int temp2 = q.dequeue();
+	temp2 = q.dequeue();
+	temp2 = q.dequeue();
+	q.debugPrintContents();
+	q.enqueue(24);
+	q.debugPrintContents();
+	std::cout << "num de elementos de la cola: " << q.size() << std::endl;
+	std::cout << "peek : " << *q.peek() << std::endl;
+	int temp3 = q.dequeue();
+	q.debugPrintContents();
 
 	// Tell the window to use vsync and work on high DPI displays
 	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
@@ -75,15 +112,56 @@ int main ()
 	inventario->AddItem(new Item("Mondongo", 3));
 	inventario->debugPrintContents();
 
-	PlayerCharacter* player = new PlayerCharacter();
+	PlayerCharacter* player = new PlayerCharacter("player1");
 	player->Start();
 	player->inventory = inventario;
+	player->printUID();
+
+	//hacer unos dos o tres enemigos que se muevan hacia el jugador
+
+	//todos los gameobjects deberemos guardar su uid en esta tabla
+	//tablahash(nombre, uid)
+
+
+	//panelmensaje
+	PanelMensaje* panel = new PanelMensaje(  GetScreenWidth() - 210 , 200, 50, 2);
+
+	//para la prueba, simularemos que  obtiene de golpe un pu;ado de logros
+	panel->Show("thief");
+	panel->Show("gossip");
+	panel->Show("fisher");
+	panel->Show("hoarder");
+
+
+	//prueba de calculo de hash md5 usando la biblioteca de zunawe
+	uint8_t result[16]; 
+	char* mensaje = "hola mundo";
+	md5String(mensaje, result);
+	//imprimir el hash en hexadecimal
+	// printHash
+	std::cout << "hash computado: ";
+	for (int i = 0; i < 16; i++)
+	{
+		//std::cout << std::hex << result[i];
+		printf("%02X", result[i]);
+	}
+	std::cout << std::endl;
+
+
+
 		
 	// game loop
 	while (!WindowShouldClose())		// run the loop untill the user presses ESCAPE or presses the Close button on the window
 	{
 		//update al jugador
 		player->Update();
+		panel->update();
+
+		if (IsKeyPressed(KEY_SPACE))
+		{
+			panel->Show("Hola Mundo");
+		}
+
 
 		// drawing
 		BeginDrawing();
@@ -107,6 +185,9 @@ int main ()
 
 		player->Draw();
 
+
+		//UI se dibuja al ultimo
+		panel->draw();
 		
 		// end the frame and get ready for the next one  (display frame, poll input, etc...)
 		EndDrawing();
