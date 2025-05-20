@@ -170,7 +170,7 @@ int main ()
 		ClearBackground(BLACK);
 
 		// draw some text using the default font
-		DrawText("Hello Raylib", 200,200,20,WHITE);
+		//DrawText("Hello Raylib", 200,200,20,WHITE);
 
 		for (int i = 0; i < TILEMAPY; i++)
 		{
@@ -184,7 +184,10 @@ int main ()
 		}
 
 		player->Draw();
-
+		// foreach obj in gameObjects
+		//  if obj->isEnabled()
+		//   ojb->Draw();
+		//
 
 		//UI se dibuja al ultimo
 		panel->draw();

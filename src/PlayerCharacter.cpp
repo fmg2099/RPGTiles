@@ -18,6 +18,8 @@ void PlayerCharacter::Draw()
 {
 	DrawTexture(texture, position.x, position.y, WHITE);
 	DrawText("PLAYER", position.x, position.y - 40, 10, WHITE);
+	DrawText( getUID().c_str(), position.x, position.y - 20, 10, WHITE);
+
 
 	//hud
 
